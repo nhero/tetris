@@ -1,0 +1,28 @@
+.Grid {
+  $base-color-id: 128;
+  $base-10: hsl($base-color-id, 50%, 10%);
+  $base-20: hsl($base-color-id, 50%, 20%);
+  $base-30: hsl($base-color-id, 50%, 30%);
+  $base-40: hsl($base-color-id, 50%, 40%);
+  $base-50: hsl($base-color-id, 50%, 50%);
+  $base-60: hsl($base-color-id, 50%, 60%);
+  $base-70: hsl($base-color-id, 50%, 70%);
+  $base-80: hsl($base-color-id, 50%, 80%);
+  $base-90: hsl($base-color-id, 50%, 90%);
+  $base-100: hsl($base-color-id, 50%, 100%);
+
+  .row {
+    display: flex;
+    flex-direction: row;
+
+    .cell {
+      background-color: $base-50;
+      width: 25px;
+      height: 25px;
+      border-top: 5px solid $base-70;
+      border-right: 5px solid $base-20;
+      border-bottom: 5px solid $base-10;
+      border-left: 5px solid $base-60;
+    }
+  }
+}

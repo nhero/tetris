@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import Test2 from './Test2';
+import Cell from './Cell';
 
-describe('<Test2 />', () => {
+describe('<Cell />', () => {
   test('it should mount', () => {
-    render(<Test2 />);
+    render(<Cell />);
     
-    const test2 = screen.getByTestId('Test2');
+    const cell = screen.getByTestId('Cell');
 
-    expect(test2).toBeInTheDocument();
+    expect(cell).toBeInTheDocument();
   });
 });

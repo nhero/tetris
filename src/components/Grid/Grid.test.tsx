@@ -5,7 +5,7 @@ import Grid from './Grid';
 
 describe('<Grid />', () => {
   test('it should mount', () => {
-    render(<Grid />);
+    render(<Grid rows={20} columns={10} border={true}/>);
     
     const grid = screen.getByTestId('Grid');
 

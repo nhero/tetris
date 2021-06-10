@@ -10,28 +10,50 @@ interface IGridProps {
 const Grid: React.FC<IGridProps> = ({ rows, columns, border }) => {
   const getRows = () => {
     let rowData = [];
+    const totalRows = border ? rows + 2 : rows;
+    const totalColumns = columns ? columns + 2 : columns;
     
-    for (let row = 0; row < rows; row++) {
+    for (let row = 0; row < totalRows; row++) {
       rowData.push(
-        <div className="row" key={row}>{getCells(row, columns)}</div>
+        <div className="row" key={row}>{getCells(row, totalRows, totalColumns, )}</div>
       );
     }
 
     return <React.Fragment>{rowData}</React.Fragment>;
   }
 
-  const getCells = (rowId: number, numCols: number) => {
+  const getCells = (rowId: number, totalRows: number, totalColumns: number) => {
     let columnData: any = [];
-    let toggleClass;
-    for (let col = 0; col < numCols; col++) {
-      //toggleClass = rows[rowId][col] === false ? "off" : "on";
-      // if (col % 2 === 0) {
-      //   columnData.push(<div onClick={() => updateMatrix(rows[rowId][col], rowId, col)} className={`col shadow ${toggleClass}`}></div>);
-      // } else {
-      // }
-      const id = `${rowId}-${col}`;  
-      columnData.push(<div className={`cell ${toggleClass}`} key={id}></div>);
+    const colors: any = [
+      'blank',
+      'green',
+      'red',
+      'orange',
+      'yellow',
+      'light-blue',
+      'dark-blue',
+      'purple'
+    ];
+    
+    for (let col = 0; col < totalColumns; col++) {
+      let color;
 
+      if (border) {
+        if (
+          rowId === 0 || 
+          rowId === totalRows -1 ||
+          col === 0 ||
+          col === totalColumns -1
+          ) {
+          color = 'grey';
+        }
+        else {
+          color = colors[Math.floor(Math.random() * colors.length)];
+        }
+      }
+      
+      const id = `${rowId}-${col}`;  
+      columnData.push(<div className={`cell ${color}`} key={id}></div>);
     }
 
     return columnData;

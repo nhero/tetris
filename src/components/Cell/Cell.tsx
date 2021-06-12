@@ -1,10 +1,12 @@
-import React from 'react';
-import './Cell.scss';
+import React from "react";
+import "./Cell.scss";
 
-const Cell: React.FC = () => (
-  <div className="Cell" data-testid="Cell">
-    Cell Component
-  </div>
+interface ICellProps {
+  color: string;
+}
+
+const Cell: React.FC<ICellProps> = ({ color }) => (
+  <div className={`Cell ${color}`} data-testid="Cell"></div>
 );
 
 export default Cell;

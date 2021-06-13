@@ -1,25 +1,25 @@
-@mixin cell($hue, $saturation) {
-  $base-color-id: $hue;
+// @mixin cell($hue, $saturation) {
+//   $base-color-id: $hue;
 
-  $base-10: hsl($base-color-id, $saturation, 10%);
-  $base-20: hsl($base-color-id, $saturation, 20%);
-  $base-30: hsl($base-color-id, $saturation, 30%);
-  $base-40: hsl($base-color-id, $saturation, 40%);
-  $base-50: hsl($base-color-id, $saturation, 50%);
-  $base-60: hsl($base-color-id, $saturation, 60%);
-  $base-70: hsl($base-color-id, $saturation, 70%);
-  $base-80: hsl($base-color-id, $saturation, 80%);
-  $base-90: hsl($base-color-id, $saturation, 90%);
-  $base-100: hsl($base-color-id, $saturation, 100%);
+//   // $base-10: hsl($base-color-id, $saturation, 10%);
+//   // $base-20: hsl($base-color-id, $saturation, 20%);
+//   // $base-30: hsl($base-color-id, $saturation, 30%);
+//   // $base-40: hsl($base-color-id, $saturation, 40%);
+//   // $base-50: hsl($base-color-id, $saturation, 50%);
+//   // $base-60: hsl($base-color-id, $saturation, 60%);
+//   // $base-70: hsl($base-color-id, $saturation, 70%);
+//   // $base-80: hsl($base-color-id, $saturation, 80%);
+//   // $base-90: hsl($base-color-id, $saturation, 90%);
+//   // $base-100: hsl($base-color-id, $saturation, 100%);
 
-  background-color: $base-50;
-  border-top: 5px solid $base-70;
-  border-right: 5px solid $base-40;
-  border-bottom: 5px solid $base-10;
-  border-left: 5px solid $base-60;
-}
+//   background-color: $base-50;
+//   border-top: 5px solid $base-70;
+//   border-right: 5px solid $base-40;
+//   border-bottom: 5px solid $base-10;
+//   border-left: 5px solid $base-60;
+// }
 
-$black: #000;
+// $black: #000;
 
 .Grid {
   .row {
@@ -30,42 +30,42 @@ $black: #000;
       width: 25px;
       height: 25px;
 
-      &.grey {
-        @include cell(0, 0);
-      }
+      // &.grey {
+      //   @include cell(0, 0);
+      // }
 
-      &.green {
-        @include cell(128, 50);
-      }
+      // &.green {
+      //   @include cell(128, 50);
+      // }
 
-      &.red {
-        @include cell(1, 50);
-      }
+      // &.red {
+      //   @include cell(1, 50);
+      // }
 
-      &.yellow {
-        @include cell(50, 50);
-      }
+      // &.yellow {
+      //   @include cell(50, 50);
+      // }
 
-      &.light-blue {
-        @include cell(190, 50);
-      }
+      // &.light-blue {
+      //   @include cell(190, 50);
+      // }
 
-      &.dark-blue {
-        @include cell(235, 50);
-      }
+      // &.dark-blue {
+      //   @include cell(235, 50);
+      // }
 
-      &.orange {
-        @include cell(25, 50);
-      }
+      // &.orange {
+      //   @include cell(25, 50);
+      // }
 
-      &.purple {
-        @include cell(280, 50);
-      }
+      // &.purple {
+      //   @include cell(280, 50);
+      // }
 
-      &.blank {
-        background-color: $black;
-        border: 5px solid $black;
-      }
+      // &.blank {
+      //   background-color: $black;
+      //   border: 5px solid $black;
+      // }
     }
   }
 }

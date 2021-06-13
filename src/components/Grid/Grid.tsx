@@ -56,20 +56,53 @@ const Grid: React.FC<IGridProps> = ({ rows, columns, border }) => {
     return piece;
   };
 
+  const [gameOver, setGameOver] = useState(false);
   const [currentRow, setCurrentRow] = useState(border ? 1 : 0);
   const [currentColumn, setCurrentColumn] = useState(border ? 1 : 0);
   const [currentPiece, setCurrentPiece] = useState(getNextPiece());
   const [grid, setGrid] = useState(getInitialGrid());
   const [refreshSpeed, setRefreshSpeed] = useState(100);
+  const minColumnId = border ? 1 : 0;
+  const maxColumnId = border ? columns : columns - 1;
 
   useEffect(() => {
-    const handleEscape = (event: any) => {};
+    const handleEscape = (event: any) => {
+      switch (event.keyCode) {
+        case 37: // arrow left
+          setCurrentColumn((currentColumn) =>
+            currentColumn - 1 < minColumnId ? minColumnId : currentColumn - 1
+          );
+          break;
+        case 39: // arrow right
+          setCurrentColumn((currentColumn) => {
+            const newColumnId = currentColumn + 1;
+            return newColumnId > maxColumnId ? maxColumnId : currentColumn + 1;
+          });
+          break;
+        default:
+          return;
+      }
+    };
     window.addEventListener("keydown", handleEscape);
 
     const updateGrid = () => {
-      setCurrentRow((currentRow) =>
-        currentRow < totalRows - 2 ? currentRow + 1 : 1
-      );
+      setCurrentRow((currentRow) => {
+        if (currentRow < totalRows - 2) {
+          if (grid[currentRow + 1][currentColumn] !== "blank") {
+            // check if no blocks in next row
+            if (currentRow === 1) {
+              setGameOver(true);
+            }
+            return 1;
+          } else {
+            return currentRow < totalRows - 2 ? currentRow + 1 : 1;
+          }
+        } else {
+          return 1;
+        }
+      });
+      setCurrentPiece(getNextPiece());
+      setRefreshSpeed(100);
     };
     const newGrid = grid;
     if (currentRow > 1) {
@@ -83,7 +116,16 @@ const Grid: React.FC<IGridProps> = ({ rows, columns, border }) => {
       updateGrid();
     }, refreshSpeed);
     return () => clearInterval(interval);
-  }, [currentRow, grid]);
+  }, [
+    grid,
+    currentRow,
+    currentColumn,
+    currentPiece,
+    refreshSpeed,
+    minColumnId,
+    maxColumnId,
+    totalRows,
+  ]);
 
   const getCells = (rowId: number) => {
     let columnData: any = [];
@@ -111,8 +153,9 @@ const Grid: React.FC<IGridProps> = ({ rows, columns, border }) => {
   };
 
   return (
-    <div className="Grid" data-testid="Grid">
-      Grid Component
+    <div className={`Grid ${gameOver ? "game-over" : ""}`} data-testid="Grid">
+      Current Column: {currentColumn} <br />
+      Current Row: {currentRow} <br />
       {getRows()}
     </div>
   );

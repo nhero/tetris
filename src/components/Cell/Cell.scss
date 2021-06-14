@@ -63,6 +63,6 @@ $black: #000;
   }
 }
 
-.game-over .Cell:not(.grey) {
-  background-color: $black;
+.game-over .Cell:not(.grey, .blank) {
+  background-color: #eaeaea;
 }

@@ -1,12 +1,11 @@
-import React from 'react';
-import './App.css';
-
-import Grid from './components/Grid/Grid';
+import React from "react";
+import "./App.css";
+import Tetris from "./components/Tetris/Tetris";
 
 function App() {
   return (
     <div className="App">
-      <Grid rows={20} columns={10} border={true} />
+      <Tetris />
     </div>
   );
 }

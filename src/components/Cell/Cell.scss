@@ -64,5 +64,5 @@ $black: #000;
 }
 
 .game-over .Cell:not(.grey, .blank) {
-  background-color: #eaeaea;
+  background-color: hsl(0, 0, 50%);
 }

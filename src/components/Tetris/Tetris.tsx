@@ -1,6 +1,25 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import "./Tetris.scss";
 import Grid from "./../Grid/Grid";
+
+import useKeypress from "../../hooks/useKeypress";
+import useInterval from "../../hooks/useInterval";
+
+// eslint-disable-next-line
+interface IPiece {
+  column: number;
+  row: number;
+  color: string;
+}
+
+interface ITetris {
+  grid: any;
+  currentColumn: number;
+  currentRow: number;
+  refreshSpeed: number;
+  currentPiece: any;
+  gameOver: boolean;
+}
 
 const Tetris = () => {
   const border = true;
@@ -9,17 +28,71 @@ const Tetris = () => {
   const totalRows = border ? rows + 2 : rows;
   const totalColumns = columns ? columns + 2 : columns;
 
+  useInterval(() => {
+    setTetris((tetris) => {
+      if (tetris.grid[tetris.currentRow][tetris.currentColumn] === "blank") {
+        tetris.grid[tetris.currentRow][tetris.currentColumn] = "orange";
+        // clear previous position
+        if (tetris.currentRow > 1) {
+          tetris.grid[tetris.currentRow - 1][tetris.currentColumn] = "blank";
+        }
+      }
+
+      let nextRow = tetris.currentRow + 1 <= 20 ? tetris.currentRow + 1 : 1;
+      // can't move to next row so reset
+      if (
+        tetris.grid[tetris.currentRow + 1][tetris.currentColumn] !== "blank"
+      ) {
+        nextRow = 1;
+      }
+
+      return {
+        ...tetris,
+        currentRow: nextRow,
+      };
+    });
+  }, 1000);
+
+  useKeypress("ArrowLeft", () => {
+    setTetris((tetris) => {
+      const nextColumn =
+        tetris.currentColumn === 1 ? 1 : tetris.currentColumn - 1;
+      tetris.grid[tetris.currentRow][tetris.currentColumn] = "blank";
+      tetris.grid[tetris.currentRow][nextColumn] = "orange";
+
+      return {
+        ...tetris,
+        currentColumn: nextColumn,
+      };
+    });
+  });
+
+  useKeypress("ArrowRight", () => {
+    setTetris((tetris) => {
+      const nextColumn =
+        tetris.currentColumn === 10 ? 10 : tetris.currentColumn + 1;
+      tetris.grid[tetris.currentRow][tetris.currentColumn] = "blank";
+      tetris.grid[tetris.currentRow][nextColumn] = "orange";
+
+      return {
+        ...tetris,
+        currentColumn: nextColumn,
+      };
+    });
+  });
+
   const getInitialCells = (
     rowId: number,
     totalRows: number,
-    totalColumns: number
+    totalColumns: number,
+    hasBorder = border
   ) => {
     let columnData: any = [];
 
     for (let col = 0; col < totalColumns; col++) {
       let color;
 
-      if (border) {
+      if (hasBorder) {
         if (
           rowId === 0 ||
           rowId === totalRows - 1 ||
@@ -39,149 +112,60 @@ const Tetris = () => {
   };
 
   const newGame = () => {
-    setCurrentRow(border ? 1 : 0);
-    setCurrentColumn(border ? 6 : 0);
-    setGrid(getInitialGrid());
-    console.log("grid", grid);
-    setGameOver(false);
-    console.log("asdf", getInitialGrid());
+    setTetris(loadInitialGameState());
   };
 
-  const getInitialGrid = () => {
+  const getInitialGrid = (hasBorder = border) => {
     let initialGrid = [];
 
     for (let row = 0; row < totalRows; row++) {
-      initialGrid[row] = getInitialCells(row, totalRows, totalColumns);
+      initialGrid[row] = getInitialCells(
+        row,
+        totalRows,
+        totalColumns,
+        hasBorder
+      );
     }
 
     return initialGrid;
   };
 
   const getNextPiece = () => {
-    const piece = ["orange"];
+    const piece = [
+      {
+        column: 6,
+        row: 1,
+        color: "orange",
+      },
+    ];
+
     return piece;
   };
 
-  const [gameOver, setGameOver] = useState(false);
-  const [currentRow, setCurrentRow] = useState(border ? 1 : 0);
-  const [currentColumn, setCurrentColumn] = useState(border ? 6 : 0);
-  //const [currentPiece, setCurrentPiece] = useState(getNextPiece());
-  const currentPiece = getNextPiece();
-  const [grid, setGrid] = useState(getInitialGrid());
-  //const [refreshSpeed, setRefreshSpeed] = useState(100);
-  const refreshSpeed = 100;
-  const minColumnId = border ? 1 : 0;
-  const maxColumnId = border ? columns : columns - 1;
-
-  useEffect(() => {
-    const handleKeys = (event: any) => {
-      switch (event.keyCode) {
-        case 37: // arrow left
-          setCurrentColumn((currentColumn) =>
-            currentColumn - 1 < minColumnId ? minColumnId : currentColumn - 1
-          );
-          break;
-        case 39: // arrow right
-          setCurrentColumn((currentColumn) => {
-            const newColumnId = currentColumn + 1;
-            return newColumnId > maxColumnId ? maxColumnId : currentColumn + 1;
-          });
-          break;
-        default:
-          return;
-      }
-    };
-    window.addEventListener("keydown", handleKeys);
-  }, []);
-
-  const canShiftPieceVertically = (): boolean => {
-    console.log("csv", currentRow, currentColumn);
-
-    if (currentRow < totalRows - 2) {
-      if (grid[currentRow + 1][currentColumn] !== "blank") {
-        // check if no blocks in next row
-        if (currentRow === 1) {
-          setGameOver(true);
-          return false;
-        }
-        return true;
-      } else {
-        return true;
-      }
-    } else {
-      return true;
-    }
-  };
-
-  const shiftPieceVertically = () => {};
-
-  const canShiftPieceHorizontally = () => {
-    if ()
-  };
-
-  const shiftPieceHorizontally = () => {};
-
-  useEffect(() => {
-    const updateGridRow = () => {
-      setCurrentRow((currentRow) => {
-        if (currentRow < totalRows - 2) {
-          if (grid[currentRow + 1][currentColumn] !== "blank") {
-            // check if no blocks in next row
-            if (currentRow === 1) {
-              setGameOver(true);
-              return 1;
-            }
-            return 1;
-          } else {
-            return currentRow < totalRows - 2 ? currentRow + 1 : 1;
-          }
-        } else {
-          return 1;
-        }
-      });
-      //setCurrentPiece(getNextPiece());
-      //setRefreshSpeed(100);
-      //console.log("cur row", currentRow);
-
-      const newGrid = grid;
-      if (currentRow > 1) {
-        newGrid[currentRow - 1][currentColumn] = "blank";
-      }
-
-      newGrid[currentRow][currentColumn] = currentPiece;
-      setGrid(grid);
+  const loadInitialGameState = () => {
+    const tetris: ITetris = {
+      grid: getInitialGrid(),
+      currentColumn: 6,
+      currentRow: 1,
+      currentPiece: getNextPiece(),
+      refreshSpeed: 1000,
+      gameOver: false,
     };
 
-    const interval = setInterval(() => {
-      updateGridRow();
-    }, refreshSpeed);
-    return () => clearInterval(interval);
-  }, [currentRow]);
+    return tetris;
+  };
 
-  // const updateGridColumn = () => {
-  //   setCurrentRow((currentRow) => {
-  //     console.log("current Row");
-  //     if (currentRow < totalColumns - 2) {
-  //       if (grid[currentRow][currentColumn] !== "blank") {
-  //         return 1;
-  //       } else {
-  //         return currentRow < totalRows - 2 ? currentRow + 1 : 1;
-  //       }
-  //     } else {
-  //       return 1;
-  //     }
-  //   });
-  // };
+  const [tetris, setTetris] = useState(loadInitialGameState());
 
   return (
     <div
-      className={`Tetris ${gameOver ? "game-over" : ""}`}
+      className={`Tetris ${tetris.gameOver ? "game-over" : ""}`}
       data-testid="Tetris"
     >
-      Current Column: {currentColumn} <br />
-      Current Row: {currentRow} <br />
+      Current Column: {tetris.currentColumn} <br />
+      Current Row: {tetris.currentRow} <br />
       <button onClick={newGame}>Start Over</button>
-      <Grid grid={grid} />
+      <Grid grid={tetris.grid} />
     </div>
   );
 };

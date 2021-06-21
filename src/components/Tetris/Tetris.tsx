@@ -18,7 +18,10 @@ interface ITetris {
   currentRow: number;
   refreshSpeed: number;
   currentPiece: any;
+  previousPiece: any;
   gameOver: boolean;
+  clearedRows: number;
+  score: number;
 }
 
 const Tetris = () => {
@@ -27,22 +30,80 @@ const Tetris = () => {
   const columns = 10;
   const totalRows = border ? rows + 2 : rows;
   const totalColumns = columns ? columns + 2 : columns;
+  const colors = [
+    "green",
+    "red",
+    "yellow",
+    "light-blue",
+    "dark-blue",
+    "orange",
+    "purple",
+  ];
 
-  useInterval(() => {
+  const didClearRow = () => {
     setTetris((tetris) => {
-      if (tetris.grid[tetris.currentRow][tetris.currentColumn] === "blank") {
-        tetris.grid[tetris.currentRow][tetris.currentColumn] = "orange";
-        // clear previous position
-        if (tetris.currentRow > 1) {
-          tetris.grid[tetris.currentRow - 1][tetris.currentColumn] = "blank";
+      const clearedRows = [];
+      for (let index = 1; index <= 20; index++) {
+        if (!tetris.grid[index].includes("blank")) {
+          clearedRows.push(index);
+        }
+      }
+      if (clearedRows.length) {
+        tetris.clearedRows = tetris.clearedRows + clearedRows.length;
+        for (let index = 20; index >= 1; index--) {
+          if (!tetris.grid[index].includes("blank")) {
+            clearedRows.push(index);
+          }
         }
       }
 
+      return {
+        ...tetris,
+      };
+    });
+  };
+
+  const nextRow = () => {
+    setTetris((tetris) => {
       let nextRow = tetris.currentRow + 1 <= 20 ? tetris.currentRow + 1 : 1;
+
+      if (nextRow !== 1) {
+        tetris.previousPiece.map((piece: any) => {
+          tetris.grid[tetris.currentRow][
+            tetris.currentColumn + piece.columnOffset
+          ] = "blank";
+
+          return {
+            ...piece,
+          };
+        });
+
+        // clear previous position
+        if (tetris.currentRow > 1) {
+          tetris.currentPiece.map((piece: any) => {
+            tetris.grid[tetris.currentRow - 1][piece.column] = "blank";
+
+            return {
+              ...piece,
+            };
+          });
+        }
+      }
+
+      if (tetris.grid[tetris.currentRow][tetris.currentColumn] === "blank") {
+        tetris.currentPiece.map((piece: any) => {
+          tetris.grid[nextRow][tetris.currentColumn + piece.columnOffset] =
+            piece.color;
+
+          return {
+            ...piece,
+            currentColumn: tetris.currentRow,
+          };
+        });
+      }
+
       // can't move to next row so reset
-      if (
-        tetris.grid[tetris.currentRow + 1][tetris.currentColumn] !== "blank"
-      ) {
+      if (tetris.grid[nextRow + 1][tetris.currentColumn] !== "blank") {
         nextRow = 1;
       }
 
@@ -51,14 +112,55 @@ const Tetris = () => {
         currentRow: nextRow,
       };
     });
-  }, 1000);
+
+    // check if rows cleared
+    didClearRow();
+  };
+
+  useInterval(() => {
+    nextRow();
+  }, 500);
+
+  useKeypress("ArrowDown", () => {
+    nextRow();
+  });
 
   useKeypress("ArrowLeft", () => {
     setTetris((tetris) => {
-      const nextColumn =
+      tetris.previousPiece = tetris.currentPiece.map((piece: any) => {
+        tetris.grid[tetris.currentRow][
+          tetris.currentColumn + piece.columnOffset
+        ] = "blank";
+        return {
+          ...piece,
+        };
+      });
+
+      let nextColumn =
         tetris.currentColumn === 1 ? 1 : tetris.currentColumn - 1;
-      tetris.grid[tetris.currentRow][tetris.currentColumn] = "blank";
-      tetris.grid[tetris.currentRow][nextColumn] = "orange";
+      const minColumnOffsetLeft =
+        tetris.currentPiece.reduce(
+          (min: number, p: any) =>
+            p.columnOffset < min ? p.columnOffset : min,
+          tetris.currentPiece[0].columnOffset
+        ) *
+          -1 +
+        1;
+
+      if (minColumnOffsetLeft > nextColumn) {
+        nextColumn = minColumnOffsetLeft;
+      }
+
+      tetris.currentPiece.map((piece: any) => {
+        tetris.grid[tetris.currentRow][nextColumn + piece.columnOffset] =
+          piece.color;
+        piece.column = nextColumn + piece.columnOffset;
+
+        return {
+          ...piece,
+          currentColumn: nextColumn + piece.columnOffset,
+        };
+      });
 
       return {
         ...tetris,
@@ -69,10 +171,29 @@ const Tetris = () => {
 
   useKeypress("ArrowRight", () => {
     setTetris((tetris) => {
+      tetris.currentPiece.map((piece: any) => {
+        tetris.grid[tetris.currentRow][
+          tetris.currentColumn + piece.columnOffset
+        ] = "blank";
+
+        return {
+          ...piece,
+        };
+      });
+
       const nextColumn =
         tetris.currentColumn === 10 ? 10 : tetris.currentColumn + 1;
-      tetris.grid[tetris.currentRow][tetris.currentColumn] = "blank";
-      tetris.grid[tetris.currentRow][nextColumn] = "orange";
+
+      tetris.currentPiece.map((piece: any) => {
+        tetris.grid[tetris.currentRow][nextColumn + piece.columnOffset] =
+          piece.color;
+        piece.column = nextColumn + piece.columnOffset;
+
+        return {
+          ...piece,
+          currentColumn: nextColumn + piece.columnOffset,
+        };
+      });
 
       return {
         ...tetris,
@@ -131,11 +252,19 @@ const Tetris = () => {
   };
 
   const getNextPiece = () => {
+    const colorNumber: number = Math.floor(Math.random() * 6);
     const piece = [
       {
         column: 6,
+        columnOffset: 0,
         row: 1,
-        color: "orange",
+        color: colors[colorNumber],
+      },
+      {
+        column: 5,
+        columnOffset: -1,
+        row: 1,
+        color: colors[colorNumber],
       },
     ];
 
@@ -148,8 +277,11 @@ const Tetris = () => {
       currentColumn: 6,
       currentRow: 1,
       currentPiece: getNextPiece(),
+      previousPiece: [],
       refreshSpeed: 1000,
       gameOver: false,
+      clearedRows: 0,
+      score: 0,
     };
 
     return tetris;

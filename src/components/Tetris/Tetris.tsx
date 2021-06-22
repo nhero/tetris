@@ -5,20 +5,15 @@ import Grid from "./../Grid/Grid";
 import useKeypress from "../../hooks/useKeypress";
 import useInterval from "../../hooks/useInterval";
 
-// eslint-disable-next-line
-interface IPiece {
-  column: number;
-  row: number;
-  color: string;
-}
-
+import IPiece from "./tetris.interface";
+import tetriminoes from "./tetriminoes";
 interface ITetris {
   grid: any;
   currentColumn: number;
   currentRow: number;
   refreshSpeed: number;
-  currentPiece: any;
-  previousPiece: any;
+  currentPiece: Array<IPiece>;
+  previousPiece: Array<IPiece>;
   gameOver: boolean;
   clearedRows: number;
   score: number;
@@ -30,15 +25,7 @@ const Tetris = () => {
   const columns = 10;
   const totalRows = border ? rows + 2 : rows;
   const totalColumns = columns ? columns + 2 : columns;
-  const colors = [
-    "green",
-    "red",
-    "yellow",
-    "light-blue",
-    "dark-blue",
-    "orange",
-    "purple",
-  ];
+  const initialColumn = 6;
 
   const didClearRow = () => {
     setTetris((tetris) => {
@@ -128,9 +115,11 @@ const Tetris = () => {
       ) {
         tetris.gameOver = true;
       }
-      // can't move to next row so reset row
+      // can't move to next row so reset row and get next piece
       else if (tetris.grid[nextRow][tetris.currentColumn] !== "blank") {
         nextRow = 1;
+        tetris.currentColumn = initialColumn;
+        tetris.currentPiece = getNextPiece();
       }
 
       return {
@@ -278,29 +267,15 @@ const Tetris = () => {
   };
 
   const getNextPiece = () => {
-    const colorNumber: number = Math.floor(Math.random() * 6);
-    const piece = [
-      {
-        column: 6,
-        columnOffset: 0,
-        row: 1,
-        color: colors[colorNumber],
-      },
-      {
-        column: 5,
-        columnOffset: -1,
-        row: 1,
-        color: colors[colorNumber],
-      },
-    ];
+    const pieceNumber: number = Math.floor(Math.random() * 6);
 
-    return piece;
+    return tetriminoes[pieceNumber];
   };
 
   const loadInitialGameState = () => {
     const tetris: ITetris = {
       grid: getInitialGrid(),
-      currentColumn: 6,
+      currentColumn: initialColumn,
       currentRow: 1,
       currentPiece: getNextPiece(),
       previousPiece: [],

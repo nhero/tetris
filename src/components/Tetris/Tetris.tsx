@@ -48,14 +48,26 @@ const Tetris = () => {
           clearedRows.push(index);
         }
       }
-      if (clearedRows.length) {        
+      if (clearedRows.length) {
         tetris.clearedRows = tetris.clearedRows + clearedRows.length;
         for (let index = 20; index >= 1; index--) {
           if (index > clearedRows.length) {
             tetris.grid[index] = [...tetris.grid[index - clearedRows.length]];
-          }
-          else {
-            tetris.grid[index] = ['grey', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'grey']; 
+          } else {
+            tetris.grid[index] = [
+              "grey",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "blank",
+              "grey",
+            ];
           }
         }
       }
@@ -68,13 +80,17 @@ const Tetris = () => {
 
   const nextRow = () => {
     setTetris((tetris) => {
-      let nextRow = tetris.currentRow + 1 <= 20 ? tetris.currentRow + 1 : 1;
+      if (tetris.gameOver) {
+        return tetris;
+      }
+
+      let nextRow = tetris.currentRow + 1 <= 21 ? tetris.currentRow + 1 : 1;
 
       if (nextRow !== 1) {
         tetris.previousPiece.map((piece: any) => {
           tetris.grid[tetris.currentRow][
             tetris.currentColumn + piece.columnOffset
-          ] = 'blank';
+          ] = "blank";
 
           return {
             ...piece,
@@ -95,8 +111,9 @@ const Tetris = () => {
 
       if (tetris.grid[tetris.currentRow][tetris.currentColumn] === "blank") {
         tetris.currentPiece.map((piece: any) => {
-          tetris.grid[nextRow][tetris.currentColumn + piece.columnOffset] =
-            piece.color;
+          tetris.grid[tetris.currentRow][
+            tetris.currentColumn + piece.columnOffset
+          ] = piece.color;
 
           return {
             ...piece,
@@ -105,8 +122,14 @@ const Tetris = () => {
         });
       }
 
-      // can't move to next row so reset
-      if (tetris.grid[nextRow + 1][tetris.currentColumn] !== "blank") {
+      if (
+        tetris.grid[nextRow][tetris.currentColumn] !== "blank" &&
+        tetris.currentRow === 1
+      ) {
+        tetris.gameOver = true;
+      }
+      // can't move to next row so reset row
+      else if (tetris.grid[nextRow][tetris.currentColumn] !== "blank") {
         nextRow = 1;
       }
 
@@ -299,7 +322,7 @@ const Tetris = () => {
     >
       Current Column: {tetris.currentColumn} <br />
       Current Row: {tetris.currentRow} <br />
-      Cleared Rows: {tetris.clearedRows} <br />
+      Current Rows: {tetris.clearedRows} <br />
       <button onClick={newGame}>Start Over</button>
       <Grid grid={tetris.grid} />
     </div>

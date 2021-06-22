@@ -48,11 +48,14 @@ const Tetris = () => {
           clearedRows.push(index);
         }
       }
-      if (clearedRows.length) {
+      if (clearedRows.length) {        
         tetris.clearedRows = tetris.clearedRows + clearedRows.length;
         for (let index = 20; index >= 1; index--) {
-          if (!tetris.grid[index].includes("blank")) {
-            clearedRows.push(index);
+          if (index > clearedRows.length) {
+            tetris.grid[index] = [...tetris.grid[index - clearedRows.length]];
+          }
+          else {
+            tetris.grid[index] = ['grey', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'blank', 'grey']; 
           }
         }
       }
@@ -71,7 +74,7 @@ const Tetris = () => {
         tetris.previousPiece.map((piece: any) => {
           tetris.grid[tetris.currentRow][
             tetris.currentColumn + piece.columnOffset
-          ] = "blank";
+          ] = 'blank';
 
           return {
             ...piece,
@@ -296,6 +299,7 @@ const Tetris = () => {
     >
       Current Column: {tetris.currentColumn} <br />
       Current Row: {tetris.currentRow} <br />
+      Cleared Rows: {tetris.clearedRows} <br />
       <button onClick={newGame}>Start Over</button>
       <Grid grid={tetris.grid} />
     </div>

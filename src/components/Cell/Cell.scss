@@ -24,6 +24,7 @@ $black: #000;
 .Cell {
   width: 20px;
   height: 20px;
+  user-select: none;
 
   &.grey {
     @include cell(0, 0%);

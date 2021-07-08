@@ -1,192 +1,168 @@
-import IPiece from "./tetris.interface";
+interface IAdjustablePiece {
+  columnOffset: number;
+  rowOffset: number;
+  color: string;
+}
 
-const tetriminoes: Array<Array<IPiece>> = [
+const tetriminoes: Array<Array<IAdjustablePiece>> = [
   [
     // straight
     {
-      column: 4,
       columnOffset: -2,
-      row: 1,
+      rowOffset: 0,
       color: "light-blue",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 1,
+      rowOffset: 0,
       color: "light-blue",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 1,
+      rowOffset: 0,
       color: "light-blue",
     },
     {
-      column: 7,
       columnOffset: 1,
-      row: 1,
+      rowOffset: 0,
       color: "light-blue",
     },
   ],
   // square
   [
     {
-      column: 5,
       columnOffset: -1,
-      row: 1,
+      rowOffset: 0,
       color: "yellow",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 1,
+      rowOffset: 0,
       color: "yellow",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 2,
+      rowOffset: 1,
       color: "yellow",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 2,
+      rowOffset: 1,
       color: "yellow",
     },
   ],
   // backwards L
   [
     {
-      column: 4,
       columnOffset: -2,
-      row: 1,
+      rowOffset: 0,
       color: "dark-blue",
     },
     {
-      column: 4,
       columnOffset: -2,
-      row: 2,
+      rowOffset: 1,
       color: "dark-blue",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 2,
+      rowOffset: 1,
       color: "dark-blue",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 2,
+      rowOffset: 1,
       color: "dark-blue",
     },
   ],
   // regular L
   [
     {
-      column: 6,
       columnOffset: 0,
-      row: 1,
+      rowOffset: 0,
       color: "orange",
     },
     {
-      column: 4,
       columnOffset: -2,
-      row: 2,
+      rowOffset: 1,
       color: "orange",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 2,
+      rowOffset: 1,
       color: "orange",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 2,
+      rowOffset: 1,
       color: "orange",
     },
   ],
   // T
   [
     {
-      column: 5,
       columnOffset: -1,
-      row: 1,
+      rowOffset: 0,
       color: "purple",
     },
     {
-      column: 4,
       columnOffset: -2,
-      row: 2,
+      rowOffset: 1,
       color: "purple",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 2,
+      rowOffset: 1,
       color: "purple",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 2,
+      rowOffset: 1,
       color: "purple",
     },
   ],
   // skew right
   [
     {
-      column: 5,
       columnOffset: -1,
-      row: 1,
+      rowOffset: 0,
       color: "green",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 1,
+      rowOffset: 0,
       color: "green",
     },
     {
-      column: 4,
       columnOffset: -2,
-      row: 2,
+      rowOffset: 1,
       color: "green",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 2,
+      rowOffset: 1,
       color: "green",
     },
   ],
   // skew left
   [
     {
-      column: 4,
       columnOffset: -2,
-      row: 1,
+      rowOffset: 0,
       color: "red",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 1,
+      rowOffset: 0,
       color: "red",
     },
     {
-      column: 5,
       columnOffset: -1,
-      row: 2,
+      rowOffset: 1,
       color: "red",
     },
     {
-      column: 6,
       columnOffset: 0,
-      row: 2,
+      rowOffset: 1,
       color: "red",
     },
   ],

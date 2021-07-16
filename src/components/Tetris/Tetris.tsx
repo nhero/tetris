@@ -29,36 +29,46 @@ const Tetris = () => {
   const totalColumns = columns ? columns + 2 : columns;
   const initialColumn = 6;
 
+  const shiftRows = (tetris: ITetris, clearedRows: number[]) => {
+    const maxRow = Math.max(...clearedRows);
+
+    for (let index = maxRow; index >= 1; index--) {
+      if (index > clearedRows.length) {
+        tetris.grid[index] = [...tetris.grid[index - clearedRows.length]];
+      } else {
+        tetris.grid[index] = [
+          "grey",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "blank",
+          "grey",
+        ];
+      }
+    }
+
+    return tetris;
+  };
+
   const didClearRow = () => {
     setTetris((tetris) => {
-      const clearedRows = [];
+      const clearedRows: number[] = [];
       for (let index = 1; index <= 20; index++) {
         if (!tetris.grid[index].includes("blank")) {
           clearedRows.push(index);
         }
       }
+
       if (clearedRows.length) {
-        tetris.clearedRows = tetris.clearedRows + clearedRows.length;
-        for (let index = 20; index >= 1; index--) {
-          if (index > clearedRows.length) {
-            tetris.grid[index] = [...tetris.grid[index - clearedRows.length]];
-          } else {
-            tetris.grid[index] = [
-              "grey",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "blank",
-              "grey",
-            ];
-          }
-        }
+        clearedRows.forEach((rowId: number) => {
+          tetris = shiftRows(tetris, clearedRows);
+        });
       }
 
       return {

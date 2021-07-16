@@ -6,7 +6,7 @@ interface IAdjustablePiece {
 
 const tetriminoes: Array<Array<IAdjustablePiece>> = [
   [
-    // straight
+    // straight or I
     {
       columnOffset: -2,
       rowOffset: 0,
@@ -28,7 +28,7 @@ const tetriminoes: Array<Array<IAdjustablePiece>> = [
       color: "light-blue",
     },
   ],
-  // square
+  // square or O
   [
     {
       columnOffset: -1,
@@ -51,7 +51,7 @@ const tetriminoes: Array<Array<IAdjustablePiece>> = [
       color: "yellow",
     },
   ],
-  // backwards L
+  // J
   [
     {
       columnOffset: -2,
@@ -74,7 +74,7 @@ const tetriminoes: Array<Array<IAdjustablePiece>> = [
       color: "dark-blue",
     },
   ],
-  // regular L
+  // L
   [
     {
       columnOffset: 0,
@@ -120,7 +120,7 @@ const tetriminoes: Array<Array<IAdjustablePiece>> = [
       color: "purple",
     },
   ],
-  // skew right
+  // skew right or S
   [
     {
       columnOffset: -1,
@@ -143,7 +143,7 @@ const tetriminoes: Array<Array<IAdjustablePiece>> = [
       color: "green",
     },
   ],
-  // skew left
+  // skew left or Z
   [
     {
       columnOffset: -2,

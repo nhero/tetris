@@ -115,9 +115,7 @@ const Tetris = () => {
   const canMoveVertically = (
     tetris: ITetris,
     currentPiece: any,
-    movedPiece: any,
-    maxRow: number,
-    nextRow: number
+    movedPiece: any
   ) => {
     let nonCollisionPieces = movedPiece.filter((piece: any) => {
       return !currentPiece.some(
@@ -160,27 +158,53 @@ const Tetris = () => {
     }
   };
 
-  const getMaxQuickDropRow = (tetris: ITetris) => {
+  const getMaxQuickDropRow = (tetris: ITetris, column: number) => {
     tetris.currentColumns = [
       ...new Set(tetris.currentPiece.map((item: any) => item.column)),
     ];
-
     let minFinalRow = 20;
+    let allFinalRows: { columnId: number; firstCollisionRow: number }[] = [];
     tetris.currentColumns.forEach((columnId: number) => {
       const column = extractColumn(tetris.grid, columnId);
       const pieceMaxRow = getMax(tetris.currentPiece, "row").row;
 
       // get min collision rowId from column
       const firstCollisionRow = findFirstCollisionInColumn(pieceMaxRow, column);
+
+      allFinalRows.push({
+        columnId,
+        firstCollisionRow,
+      });
+
       if (firstCollisionRow < minFinalRow) {
         minFinalRow = firstCollisionRow;
       }
     });
-    // find how many rows tall the piece is
-    const rows = [...new Set(tetris.currentPiece.map((item: any) => item.row))];
-    const rowOffset = rows.length - 1;
 
-    return minFinalRow - rowOffset;
+    // reduce to get rows to check
+    const finalRows: number[] = [
+      ...new Set(
+        allFinalRows.map(
+          (item: { columnId: number; firstCollisionRow: number }) =>
+            item.firstCollisionRow
+        )
+      ),
+    ];
+
+    const startingRow = Math.min(...finalRows) - 1;
+
+    let finalRow = 20;
+    for (let row = startingRow; row <= 20; row++) {
+      const nextPiece = movedPiece(row + 1, column, tetris);
+      const canMove = canMoveVertically(tetris, [], nextPiece);
+
+      if (!canMove) {
+        finalRow = row;
+        break;
+      }
+    }
+
+    return finalRow;
   };
 
   const nextRow = () => {
@@ -195,13 +219,7 @@ const Tetris = () => {
           : movedPiece(tetris.currentRow, tetris.currentColumn, tetris);
       const nextPiece = movedPiece(nextRow, tetris.currentColumn, tetris);
       const maxRow = getMax(nextPiece, "row");
-      const canMove = canMoveVertically(
-        tetris,
-        previousPiece,
-        nextPiece,
-        maxRow,
-        nextRow
-      );
+      const canMove = canMoveVertically(tetris, previousPiece, nextPiece);
 
       if (maxRow.row >= 21) {
         nextRow = 1;
@@ -218,7 +236,7 @@ const Tetris = () => {
         } else {
         }
 
-        const maxRow = getMaxQuickDropRow(tetris);
+        const maxRow = getMaxQuickDropRow(tetris, tetris.currentColumn);
 
         return {
           ...tetris,
@@ -259,7 +277,7 @@ const Tetris = () => {
 
       tetris = removePiece(tetris.currentRow, tetris.currentColumn, tetris);
       tetris = movePiece(tetris.currentRow, nextColumn, tetris);
-      const maxRow = getMaxQuickDropRow(tetris);
+      const maxRow = getMaxQuickDropRow(tetris, nextColumn);
 
       return {
         ...tetris,
@@ -285,7 +303,7 @@ const Tetris = () => {
 
       tetris = removePiece(tetris.currentRow, tetris.currentColumn, tetris);
       tetris = movePiece(tetris.currentRow, nextColumn, tetris);
-      const maxRow = getMaxQuickDropRow(tetris);
+      const maxRow = getMaxQuickDropRow(tetris, nextColumn);
 
       return {
         ...tetris,
@@ -317,6 +335,8 @@ const Tetris = () => {
       return {
         ...tetris,
         currentRow: 1,
+        currentColumn: initialColumn,
+        currentPiece: getNextPiece(),
       };
     });
 

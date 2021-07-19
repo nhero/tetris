@@ -122,7 +122,7 @@ const Tetris = () => {
     return tetris;
   };
 
-  const canMoveVertically = (
+  const canMovePiece = (
     tetris: ITetris,
     currentPiece: any,
     movedPiece: any
@@ -206,7 +206,7 @@ const Tetris = () => {
     let finalRow = 20;
     for (let row = startingRow; row <= 20; row++) {
       const nextPiece = movedPiece(row + 1, column, tetris);
-      const canMove = canMoveVertically(tetris, [], nextPiece);
+      const canMove = canMovePiece(tetris, [], nextPiece);
 
       if (!canMove) {
         finalRow = row;
@@ -229,7 +229,7 @@ const Tetris = () => {
           : movedPiece(tetris.currentRow, tetris.currentColumn, tetris);
       const nextPiece = movedPiece(nextRow, tetris.currentColumn, tetris);
       const maxRow = getMax(nextPiece, "row");
-      const canMove = canMoveVertically(tetris, previousPiece, nextPiece);
+      const canMove = canMovePiece(tetris, previousPiece, nextPiece);
 
       if (maxRow.row >= 21) {
         nextRow = 1;
@@ -285,15 +285,27 @@ const Tetris = () => {
         nextColumn = minColumnOffsetLeft;
       }
 
-      tetris = removePiece(tetris.currentRow, tetris.currentColumn, tetris);
-      tetris = movePiece(tetris.currentRow, nextColumn, tetris);
-      const maxRow = getMaxQuickDropRow(tetris, nextColumn);
+      const nextPiece = movedPiece(tetris.currentRow, nextColumn, tetris);
+      const canMove = canMovePiece(tetris, tetris.currentPiece, nextPiece);
 
-      return {
-        ...tetris,
-        currentColumn: nextColumn,
-        maxRow,
-      };
+      if (canMove) {
+        tetris = removePiece(tetris.currentRow, tetris.currentColumn, tetris);
+        tetris = movePiece(tetris.currentRow, nextColumn, tetris);
+        const maxRow = getMaxQuickDropRow(tetris, nextColumn);
+
+        return {
+          ...tetris,
+          currentColumn: nextColumn,
+          maxRow,
+        };
+      } else {
+        const maxRow = getMaxQuickDropRow(tetris, nextColumn);
+
+        return {
+          ...tetris,
+          maxRow,
+        };
+      }
     });
   });
 
@@ -311,15 +323,27 @@ const Tetris = () => {
         nextColumn = nextColumn - maxColumnOffsetRight;
       }
 
-      tetris = removePiece(tetris.currentRow, tetris.currentColumn, tetris);
-      tetris = movePiece(tetris.currentRow, nextColumn, tetris);
-      const maxRow = getMaxQuickDropRow(tetris, nextColumn);
+      const nextPiece = movedPiece(tetris.currentRow, nextColumn, tetris);
+      const canMove = canMovePiece(tetris, tetris.currentPiece, nextPiece);
 
-      return {
-        ...tetris,
-        currentColumn: nextColumn,
-        maxRow,
-      };
+      if (canMove) {
+        tetris = removePiece(tetris.currentRow, tetris.currentColumn, tetris);
+        tetris = movePiece(tetris.currentRow, nextColumn, tetris);
+        const maxRow = getMaxQuickDropRow(tetris, nextColumn);
+
+        return {
+          ...tetris,
+          currentColumn: nextColumn,
+          maxRow,
+        };
+      } else {
+        const maxRow = getMaxQuickDropRow(tetris, nextColumn);
+
+        return {
+          ...tetris,
+          maxRow,
+        };
+      }
     });
   });
 
